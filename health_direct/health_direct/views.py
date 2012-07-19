@@ -6,7 +6,7 @@ from forms import QuestionForm
 def home(request):
 	return render_to_response('testinter.html')
 
-def checkupsearch(request):
+def inputsearch(request):
 	if 'q' in request.GET:
 		q = request.GET['q']
 		if q:
