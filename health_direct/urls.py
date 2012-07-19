@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from health_direct.views import home, testsearch, testgenerate 
+from health_direct.views import home, inputsearch, questionbuilder, questionbuilt
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -7,8 +7,9 @@ from health_direct.views import home, testsearch, testgenerate
 
 urlpatterns = patterns('',	
 	('^home/$', home),
-	('^search/$', testsearch),
-	('^testbuilder/$', testgenerate),	
+	('^search/$', inputsearch),
+	('^questionbuilder/$', questionbuilder),
+	('^questionbuilder/successful$', questionbuilt),
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 

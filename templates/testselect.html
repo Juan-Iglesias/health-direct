@@ -1,0 +1,30 @@
+<html>
+<head>
+	<title>Test Search</title>
+</head>
+<body>
+<h2> Welcome to health-direct </h2>
+<p>Search for questions to add to your queue, this is if you'd like to track your own health.</p>
+<form action="." method="get">
+<input type="text" name="q">
+<input type="submit" value="Search">
+</form>
+{{ message }}
+<!-- when database, or models, is implemented show link to create question --> 
+
+<br>
+{% if r_list %}
+<ul>
+{% for r in r_list %}
+	<li>{{ forloop.counter }}: {{ r.text }} </li>
+	{% for tag in r.tags %}
+		{{ tag }}{% if not forloop.last %},{% endif %}
+	{% endfor %}
+{% endfor %}
+{% endif %}
+
+<a href="http://127.0.0.1:8000/questionbuilder">Create a Test</a>
+<a href="http://127.0.0.1:8000/home">home</a>
+</body>
+</html>
+

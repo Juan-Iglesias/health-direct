@@ -1,0 +1,20 @@
+<html>
+<head>
+	<title>Question Creation</title>
+</head>
+<body>
+	<h2> Build Question </h2>
+	
+	{% if form.errors %}
+		<p style="color: red;">
+			The following errors have occured:
+			{{ form.errors }}
+		</p>
+	{% endif %}
+
+	<form action="." method="post">{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Create">
+	</form>
+</body>
+</html>
