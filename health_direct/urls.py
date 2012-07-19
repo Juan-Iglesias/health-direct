@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from health_direct.health_direct.views import home, inputsearch, questionbuilder, questionbuilt
+from health_direct.views import home, inputsearch, questionbuilder, questionbuilt
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
