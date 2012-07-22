@@ -5,6 +5,5 @@ class Input(models.Model):
     name = models.CharField()
     isCheckup = models.BooleanField()
     tags = models.ManyToManyField('Tagger.Tags')
+    #The app described in the next field will handle the type of input in the record.
     app = models.CharField()
-    class Answers(models.Model):
-        responses = models.CharField(max_length=60)
