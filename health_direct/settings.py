@@ -119,6 +119,16 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'health_direct.AnswerApp',
+    'health_direct.CheckupIterator',
+    'health_direct.DoctorPerspective',
+    'health_direct.InputSearch',
+    'health_direct.InputSubmitBackend',
+    'health_direct.QuestionBuilder',
+    'health_direct.Queuer',
+    'health_direct.Tagger',
+    'health_direct.TagMining',
+    'health_direct.UserHandler',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
