@@ -10,7 +10,7 @@ class Questions(models.Model):
 #One of these tables should be created with each entry in the "Questions" table.
 #The naming convention is as follows: 'TheQuestionEntryID'_Responses'
 class Question_Responses(models.Model):
-    response = models.CharField(max_lenght=50)
+    response = models.CharField(max_length=50)
 
     class Meta:
         abstract = True

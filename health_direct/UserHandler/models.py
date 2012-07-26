@@ -7,7 +7,7 @@ from django.db import models
 class User_Entries(models.Model):
     user = models.ForeignKey('Users.user')
     input = models.ForeignKey('InputSubmitBackend.Input')
-    result = models.CharField(maxlength=60)
+    result = models.CharField(max_length=60)
     timestamp = models.DateTimeField()
     
 class User_Tags(models.Model):
