@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Tags(models.Model):
@@ -6,7 +7,7 @@ class Tags(models.Model):
 
 class TagRelations(models.Model):
     inputfk = models.ForeignKey('InputSubmitBackend.Input')
-    userfk = models.ForeignKey('Users.Users')
+    userfk = models.ForeignKey(User)
     tagfk = models.ForeignKey(Tags)
     magnitude = models.FloatField()
     
