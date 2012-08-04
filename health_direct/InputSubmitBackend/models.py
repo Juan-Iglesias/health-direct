@@ -7,6 +7,7 @@ class Apps(models.Model):
 
 class Input(models.Model):
     name = models.CharField(max_length=30)
+    app_input_code = models.CharField(max_length=70)
     isCheckup = models.BooleanField()
     tags = models.ManyToManyField('Tagger.Tags')
     #The app described in the next field will handle the type of input in the record.
