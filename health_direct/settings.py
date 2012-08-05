@@ -13,12 +13,26 @@ DATABASES = {
       'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'healthdirect',                      # Or path to database file if using sqlite3.
-        'USER': 'postgres',                      # Not used with sqlite3.
-        'PASSWORD': 'easypass',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        # Juan's 
+        #'HOST': '71.227.245.143',
+        # Evergreen 
+        #'HOST': 'juans-mac-mini.evergreen.edu',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': '192.168.1.7',
         'PORT': '5432',                      # Set to empty string for default. Not used with sqlite3.
+    },
+      'answerapp': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'anserapp',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     }
 }
+
+DATABASE_ROUTERS = ['health_direct.routers.AnswerAppRouter']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -106,7 +120,9 @@ ROOT_URLCONF = 'health_direct.urls'
 WSGI_APPLICATION = 'health_direct.wsgi.application'
 
 TEMPLATE_DIRS = (
+    #Change these to absolute paths when the code is moved onto a single machine
 	"templates",
+    "/Users/Nick/Documents/Eclipse/venv/health-direct/health_direct/apps/inputs/checkups",
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -121,11 +137,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'health_direct.AnswerApp',
     'health_direct.CheckupIterator',
-    'health_direct.DoctorPerspective',
     'health_direct.InputSearch',
     'health_direct.InputSubmitBackend',
-    'health_direct.QuestionBuilder',
-    'health_direct.Queuer',
+    #'health_direct.apps.inputs.checkups.QuestionBuilder', 
     'health_direct.Tagger',
     'health_direct.TagMining',
     'health_direct.UserHandler',

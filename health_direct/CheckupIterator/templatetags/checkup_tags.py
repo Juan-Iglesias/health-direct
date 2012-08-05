@@ -21,8 +21,8 @@ def do_CheckupDisplay(parser, token):
 
 class CheckupDisplayNode(template.Node):
     def __init__(self,appName,checkupId):
-        self.appName = appName
-        self.checkupId = checkupId
+        self.appName = template.Variable(appName)
+        self.checkupId = template.Variable(checkupId)
     def render(self,context): #Determine how to correctly use context parameter
         #if self.app not in settings.INSTALLED_APPS:
         #    return '' # @todo: raise an error here 

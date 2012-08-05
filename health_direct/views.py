@@ -18,8 +18,8 @@ def inputsearch(request):
 		return render_to_response('testselect.html',) 
 	
 def testtags(request):
-	# return render_to_response('testinter.html', {'AppName': 'NotApp', 'CheckupID': '123'})
-	return render_to_response('tagtester.html',)
+	return render_to_response('testinter.html', {'AppName': 'NotApp', 'CheckupID': '123'})
+	# return render_to_response('tagtester.html',)
 
 
 def questionbuilder(request):
