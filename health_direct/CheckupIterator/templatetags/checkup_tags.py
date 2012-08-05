@@ -21,8 +21,8 @@ def do_CheckupDisplay(parser, token):
 
 class CheckupDisplayNode(template.Node):
     def __init__(self,appName,checkupId):
-        self.appName = appName
-        self.checkupId = checkupId
+        self.appName = template.Variable(appName)
+        self.checkupId = template.Variable(checkupId)
     def render(self,context): #Determine how to correctly use context parameter
         #if self.app not in settings.INSTALLED_APPS:
         #    return '' # @todo: raise an error here 
@@ -34,8 +34,9 @@ class CheckupDisplayNode(template.Node):
         
         # find self.app (maybe it will be a path)
         # find template folder for app.path
-        template = str(self.appName) + '.html'
-        t = get_template(str(self.appName) + '/templates/' + template)
+        appNameVal = str(self.appName.resolve(context)) 
+        template = appNameVal + '.html'
+        t = get_template(appNameVal + '/templates/' + template)
         
         #Now we're tasked with filling this context with the data we'll receive from the id
         
