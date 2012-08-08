@@ -24,8 +24,8 @@ class CheckupDisplayNode(template.Node):
         self.appName = template.Variable(appName)
         self.checkupId = template.Variable(checkupId)
     def render(self,context): #Determine how to correctly use context parameter
-        #if self.app not in settings.INSTALLED_APPS:
-        #    return '' # @todo: raise an error here 
+        if self.appName not in settings.INSTALLED_APPS:
+            return '' # @todo: raise an error here 
         
         # From djangobook:
         # Like template filters, these rendering functions should fail

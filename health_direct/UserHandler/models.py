@@ -13,3 +13,6 @@ class User_Tags(models.Model):
 class User_Input(models.Model):
     user = models.ForeignKey(User)
     input = models.ForeignKey('InputSubmitBackend.Input')
+    
+    def __unicode__(self):
+        return u'%s %s' % (self.user, self.input)
