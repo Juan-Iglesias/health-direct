@@ -4,20 +4,21 @@ from django.contrib.auth.models import User
 import os
 from django.shortcuts import render_to_response
 from django.utils import importlib
+from django.contrib.auth import *
 
 #def get_checkup(httprequest):
 def get_checkup(): 
     
     #nextInput = queuer(httprequest)
     nextInput = queuer()
-    render_to_response('tagtester.html',{'appName': nextInput['appName']})
+    #render_to_response('tagtester.html',{'AppName': nextInput['appName']})
     try:
         appModule = importlib.import_module('health_direct.'+ nextInput['appName'] + '.views')
-    except ImportError, e:
-        raise e
-    return appModule.display(nextInput['checkupId'])
-    
-    
+    except ImportError:
+        raise ImportError('Import Failed')
+    dcontext = appModule.display(nextInput['CheckupId'])
+    nextInput.update(dcontext)
+    return nextInput
     # calls program at location with the id of the particular checkup as the argument
     # Runs app within checkupiterator window.
     
@@ -27,10 +28,10 @@ def get_checkup():
 def queuer(checkupSet=None):
     if checkupSet is None:
         #@todo: Replace this with a checkup populating function
-        u = User.objects.get(pk=2) #hardcode where User = 'NickS'
+        u = User.objects.get(pk=2)
         checkupSet = User_Input.objects.filter(user = u, input__isCheckup = True).iterator()
-    return checkupSet.next()
-    
+        current = checkupSet.next()
+    return {'appName': current.input.appName, 'CheckupId': current.input.pk}
     # if (request.session['member_id']) if it exists
     #     User_Input.objects.get(user=request.session['member_id'])
     #     select the most appropriate input (this will return an input primary key)
