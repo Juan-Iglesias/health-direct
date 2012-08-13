@@ -1,18 +1,21 @@
 from health_direct.InputSubmitBackend.models import Input
 from health_direct.UserHandler.models import User_Input
+from django.contrib.auth.models import User
 import os
 from django.shortcuts import render_to_response
 from django.utils import importlib
 
-def get_checkup(httprequest):
+#def get_checkup(httprequest):
+def get_checkup(): 
     
-    nextInput = queuer(httprequest)
+    #nextInput = queuer(httprequest)
+    nextInput = queuer()
     render_to_response('tagtester.html',{'appName': nextInput['appName']})
     try:
         appModule = importlib.import_module('health_direct.'+ nextInput['appName'] + '.views')
     except ImportError, e:
         raise e
-    appModule.display(nextInput['checkupId'])
+    return appModule.display(nextInput['checkupId'])
     
     
     # calls program at location with the id of the particular checkup as the argument
@@ -20,11 +23,13 @@ def get_checkup(httprequest):
     
     # When the app completes running it sends the result to User_Entries table
     
-def queuer(httprequest, checkupSet=None):
+#def queuer(httprequest, checkupSet=None):
+def queuer(checkupSet=None):
     if checkupSet is None:
         #@todo: Replace this with a checkup populating function
-        checkupSet = User_Input.objects.filter(user = httprequest.user, isCheckup = True).iterator()
-    return checkupSet.next().value('appName','inputId')
+        u = User.objects.get(pk=2) #hardcode where User = 'NickS'
+        checkupSet = User_Input.objects.filter(user = u, input__isCheckup = True).iterator()
+    return checkupSet.next()
     
     # if (request.session['member_id']) if it exists
     #     User_Input.objects.get(user=request.session['member_id'])
