@@ -12,20 +12,19 @@ register = template.Library()
 @register.tag(name="CheckupDisplay")
 def do_CheckupDisplay(parser, token):
     try:
-        tag_name, appName, checkupId = token.split_contents()
+        tag_name, appName = token.split_contents()
     except ValueError:
-        msg = '%r tag requires two arguments' % token.split_contents()[0]
+        msg = '%r tag takes a single argument' % token.split_contents()[0]
         raise template.TemplateSyntaxError(msg)
-    return CheckupDisplayNode(appName, checkupId)
+    return CheckupDisplayNode(appName)
          
 
 class CheckupDisplayNode(template.Node):
-    def __init__(self,appName,checkupId):
+    def __init__(self,appName):
         self.appName = template.Variable(appName)
-        self.checkupId = template.Variable(checkupId)
     def render(self,context): #Determine how to correctly use context parameter
-        if self.appName not in settings.INSTALLED_APPS:
-            return '' # @todo: raise an error here 
+        #if self.appName not in settings.INSTALLED_APPS:
+           # return '' # @todo: raise an error here 
         
         # From djangobook:
         # Like template filters, these rendering functions should fail
