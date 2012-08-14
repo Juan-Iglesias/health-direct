@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from health_direct.views import home, inputsearch, questionbuilder, questionbuilt, testtags
+from health_direct.views import home, inputsearch, questionbuilder, questionbuilt, testtags, user_ques
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -7,7 +7,7 @@ from health_direct.views import home, inputsearch, questionbuilder, questionbuil
 
 urlpatterns = patterns('',	
 	('^home/$', home),
-	('^testtags/$', testtags),
+	('^testtags/$', user_ques),
 	('^search/$', inputsearch),
 	('^questionbuilder/$', questionbuilder),
 	('^questionbuilder/successful$', questionbuilt),

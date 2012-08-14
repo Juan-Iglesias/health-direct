@@ -18,8 +18,8 @@ def get_checkup():
         raise ImportError('Import Failed')
     dcontext = appModule.display(nextInput['CheckupId'])
     nextInput.update(dcontext)
+    # Right now this function just returns a dictionary that will be made into a context
     return nextInput
-    # calls program at location with the id of the particular checkup as the argument
     # Runs app within checkupiterator window.
     
     # When the app completes running it sends the result to User_Entries table
