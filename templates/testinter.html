@@ -9,15 +9,14 @@
 			<input type="submit" value="Submit" />
 		</form>
 		<p>Your questions:</p>
-		{% load checkup_tags %}
+		{% if no_checkups %}
+			<b>You're out of checkups</b>
+		{% else %}
+			{% load checkup_tags %}
 
-		{% CheckupDisplay AppName %}
+			{% CheckupDisplay AppName %}
+		{% endif %}
 
-
-		<br>//how the user interacts with this question object will determine which question displays next. Research more on form submission to determine if this is a valid way of organizing the interface. Chapter 7 Djangobook.
-		<br>On the right there will be an arrow, allowing the user skip the question and proceed to the next one.
-		<br>For now a submit button dressed as a "Skip" button will suffice.<input type="submit" value="Skip"/>
-		<p><input type="submit" value="Done"/></p>
 		<p><a href="http://127.0.0.1:8000/search">Build test queue</a></p>
 	</body>
 </html>
