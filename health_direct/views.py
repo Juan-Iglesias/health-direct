@@ -2,11 +2,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from forms import QuestionForm
-from health_direct.CheckupIterator.views import get_checkup
-
-def user_ques(request):
-	dict = get_checkup()
-	return render_to_response('testinter.html', dict)
 
 def home(request):
 	return render_to_response('testinter.html')

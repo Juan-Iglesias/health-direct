@@ -5,12 +5,13 @@ import os
 from django.shortcuts import render_to_response
 from django.utils import importlib
 from django.contrib.auth import *
+from django.views.generic.base import TemplateView
 
 def make_dict(qset):
     rlist = []
     for q in qset:
         #@todo: place error handling here, what if appName of inputId is not found
-        rlist.append({'appName':q.input.appName, 'CheckupId':int(q.input.inputId) })
+        rlist.append({ 'appName': q.input.appName, 'CheckupId':int(q.input.inputId) })
     return rlist
 
 #def queuer(httprequest, checkupSet=None):
@@ -25,11 +26,10 @@ def queuer(checkupSet=None):
     return inputDict.__iter__()
 
 # This variable is global so its state can be stored with every iteration
-nextInput = queuer()
-currentInput = nextInput.next()
-
-class CheckupIterator():
-    def __init__(self, httprequest):
+class CheckupIterator(TemplateView):
+    template_name='testinter.html'
+    
+    def __init__(self):
         self.iterator = queuer()
         self.current = self.iterator.next()
         
@@ -41,10 +41,9 @@ class CheckupIterator():
         return self.current
     
     def get_checkup(self, httprequest): 
-    #def get_checkup():    
-        # if httprequest.method=='POST':
+    #def get_checkup(self):
         try:
-            currentInput = self.current
+            currentInput = self.ret_next()
             try:
                 appModule = importlib.import_module('health_direct.'+ currentInput['appName'] + '.views')
             except ImportError:
@@ -54,7 +53,8 @@ class CheckupIterator():
         except StopIteration:
             currentInput = {'no_checkups': True}
         # Right now this function just returns a dictionary that will be made into a context
-        return render_to_response('testinter.html', currentInput)
+        return self.render_to_response(currentInput)
+        #return currentInput
     # Runs app within checkupiterator window.
     
     # When the app completes running it sends the result to User_Entries table
