@@ -1,11 +1,11 @@
-from health_direct.InputSubmitBackend.models import Input
 from health_direct.UserHandler.models import User_Input
 from django.contrib.auth.models import User
-import os
-from django.shortcuts import render_to_response
 from django.utils import importlib
-from django.contrib.auth import *
 from django.views.generic.base import TemplateView
+from django.template import RequestContext
+from django.shortcuts import render_to_response
+from django.http import HttpResponse
+from django.core.context_processors import csrf
 
 def make_dict(qset):
     rlist = []
@@ -25,9 +25,10 @@ def queuer(checkupSet=None):
         inputDict = make_dict(checkupSet)
     return inputDict.__iter__()
 
-# This variable is global so its state can be stored with every iteration
-class CheckupIterator(TemplateView):
-    template_name='testinter.html'
+
+#class CheckupIterator(TemplateView):
+class CheckupIterator():
+    #template_name='testinter.html'
     
     def __init__(self):
         self.iterator = queuer()
@@ -40,21 +41,43 @@ class CheckupIterator(TemplateView):
         self.current = self.iterator.next()
         return self.current
     
-    def get_checkup(self, httprequest): 
+    #def post(self, request):
+    #    try:
+    #        r = RequestContext(request, self.get_checkup(self.ret_current()))
+    #    except StopIteration:
+    #        r = RequestContext(request, {'no_checkups': True})
+    #    return self.render_to_response(r)
+    
+    def get_checkup(self, request): 
     #def get_checkup(self):
-        try:
-            currentInput = self.ret_next()
+        #Setting currentInput
+        if request.method == "POST":
             try:
-                appModule = importlib.import_module('health_direct.'+ currentInput['appName'] + '.views')
-            except ImportError:
-                raise ImportError('Import Failed')
-            dcontext = appModule.display(currentInput['CheckupId'])
-            currentInput.update(dcontext)
-        except StopIteration:
-            currentInput = {'no_checkups': True}
-        # Right now this function just returns a dictionary that will be made into a context
-        return self.render_to_response(currentInput)
-        #return currentInput
+                currentInput = self.ret_next()
+            except StopIteration:
+                # set no_checkup to True and don't try to import
+                return render_to_response('testinter.html', {'no_checkups': True})
+            ret_checkup = self.importer(currentInput).update(csrf(request))
+            return render_to_response('testinter.html', ret_checkup, context_instance=RequestContext(request))
+        else:
+            currentInput = self.ret_current()
+            ret_checkup = self.importer(currentInput)
+        
+            # Right now this function just returns a dictionary that will be made into a context
+        return render_to_response('testinter.html', ret_checkup)
+            #return currentInput
+            
+    def importer(self, checkup_key):
+        try:
+            appModule = importlib.import_module('health_direct.'+ checkup_key['appName'] + '.views')
+        except ImportError:
+            raise ImportError('Import Failed')
+        dcontext = appModule.display(checkup_key['CheckupId'])
+        checkup_key.update(dcontext)
+        return checkup_key
+    
+    #def get_context_data(self):
+    #    return self.get_checkup(self.ret_next())
     # Runs app within checkupiterator window.
     
     # When the app completes running it sends the result to User_Entries table
