@@ -57,14 +57,13 @@ class CheckupIterator():
             except StopIteration:
                 # set no_checkup to True and don't try to import
                 return render_to_response('testinter.html', {'no_checkups': True})
-            ret_checkup = self.importer(currentInput).update(csrf(request))
-            return render_to_response('testinter.html', ret_checkup, context_instance=RequestContext(request))
+            ret_checkup = self.importer(currentInput)
         else:
             currentInput = self.ret_current()
             ret_checkup = self.importer(currentInput)
         
             # Right now this function just returns a dictionary that will be made into a context
-        return render_to_response('testinter.html', ret_checkup)
+        return render_to_response('testinter.html', ret_checkup, context_instance=RequestContext(request))
             #return currentInput
             
     def importer(self, checkup_key):

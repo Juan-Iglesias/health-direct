@@ -2,6 +2,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from forms import QuestionForm
+from django.core.context_processors import csrf
+
+
 
 def home(request):
 	return render_to_response('testinter.html')
@@ -16,11 +19,19 @@ def inputsearch(request):
 			return render_to_response('testselect.html',)
 	else:
 		return render_to_response('testselect.html',) 
-	
-def testtags(request):
-	return render_to_response('testinter.html', {'AppName': 'NotApp', 'CheckupID': '123'})
-	# return render_to_response('tagtester.html',)
 
+def build(request):
+	print('called')
+	if request.method == 'POST':
+		r = { 'post' : 'Posted'}
+	elif request.method == 'GET':
+		r = {'post' : 'Get'}
+	else:
+		r = {}
+	return render_to_response('testgenerator.html', r, context_instance=RequestContext(request))
+
+def success(request):
+	return render_to_response('testgenerator.html', {'post': 'success'})
 
 def questionbuilder(request):
 	if request.method == 'POST':
