@@ -4,7 +4,7 @@ from django.utils import importlib
 from django.views.generic.base import TemplateView
 from django.template import RequestContext
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.core.context_processors import csrf
 
 def make_dict(qset):
@@ -17,9 +17,15 @@ def make_dict(qset):
 #def queuer(httprequest, checkupSet=None):
 def queuer(checkupSet=None):
     'Returns a iterator of the relevant questions, given a user'
+    #First, we grab the logged-in User: request.user
+    #Then, make sure the user is authentic: request.user.is_authenitcated
     if checkupSet is None:
         #@todo: Replace this with a checkup populating function
-        u = User.objects.get(pk=2)
+        u = User.objects.get(pk=1)
+        #if request.user.is_authenticated():
+        #    u = request.user()
+        #else:
+        #    return HttpResponseRedirect('/login/', {'passed': True})
         # select_related allows us to follow foreign key relationships
         checkupSet = User_Input.objects.filter(user = u, input__isCheckup = True).select_related()
         inputDict = make_dict(checkupSet)
@@ -33,6 +39,7 @@ class CheckupIterator():
     def __init__(self):
         self.iterator = queuer()
         self.current = self.iterator.next()
+        self.is_completed = False
         
     def ret_current(self):
         return self.current
@@ -51,18 +58,23 @@ class CheckupIterator():
     def get_checkup(self, request): 
     #def get_checkup(self):
         #Setting currentInput
+        ret_checkup = {}
         if request.method == "POST":
+            # Capture response selected
+            
+            # Store response in db
             try:
                 currentInput = self.ret_next()
             except StopIteration:
                 # set no_checkup to True and don't try to import
-                return render_to_response('testinter.html', {'no_checkups': True})
-            ret_checkup = self.importer(currentInput)
+                self.is_completed = True
+            #Consider issuing a HttpResponseRedirect here to avoid refreshing errors
+            return HttpResponseRedirect('/home/')
         else:
             currentInput = self.ret_current()
             ret_checkup = self.importer(currentInput)
-        
             # Right now this function just returns a dictionary that will be made into a context
+        ret_checkup.update({'no_checkups': self.is_completed})
         return render_to_response('testinter.html', ret_checkup, context_instance=RequestContext(request))
             #return currentInput
             
@@ -70,7 +82,7 @@ class CheckupIterator():
         try:
             appModule = importlib.import_module('health_direct.'+ checkup_key['appName'] + '.views')
         except ImportError:
-            raise ImportError('Import Failed')
+            raise ImportError('App Import Failed')
         dcontext = appModule.display(checkup_key['CheckupId'])
         checkup_key.update(dcontext)
         return checkup_key

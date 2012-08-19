@@ -1,0 +1,13 @@
+<html>
+	<body>
+		<p><h2>Please login:</h2></p>
+		{% if invalid %}
+			<b> You entered an invalid username and/or password </b>
+		{% endif %}
+		<form action="." method="post"> {% csrf_token %}
+			<br>Username:<input type="text" name="username">
+			<br>Password:<input type="password" name="password">
+			<br><input type="submit" name="login">
+		</form>
+	</body>
+</html>

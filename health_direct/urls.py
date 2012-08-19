@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from health_direct.views import home, inputsearch, questionbuilder, questionbuilt, build, success
+from health_direct.views import home, inputsearch, questionbuilder, questionbuilt, build, success, my_login
 from health_direct.CheckupIterator.views import CheckupIterator
 
 # Uncomment the next two lines to enable the admin:
@@ -7,9 +7,9 @@ from health_direct.CheckupIterator.views import CheckupIterator
 # admin.autodiscover()
 ci = CheckupIterator()
 
-urlpatterns = patterns('',	
-	('^home/$', home),
-	('^testtags/$', ci.get_checkup),
+urlpatterns = patterns('',
+	('^login/$', my_login),	
+	('^home/$', ci.get_checkup),
 	('^search/$', inputsearch),
 	('^questionbuilder/$', questionbuilder),
 	('^questionbuilder/successful$', questionbuilt),

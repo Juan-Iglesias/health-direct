@@ -15,4 +15,4 @@ def display(id, database='answerapp'):
     # 'answerapp.html' now lies in /health_direct/apps/inputs/checkups/AnswerApp/templates/answerapp.html
     # This is a TEMPORARY solution until we discover how to nest apps in subdirectories
     
-    return {'AppName': 'AnswerApp', 'Question': question.__unicode__(), 'question_responses': rlist}
+    return {'AppName': 'AnswerApp', 'Question': question, 'question_responses': rlist}
