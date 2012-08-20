@@ -15,17 +15,17 @@ def make_dict(qset):
     return rlist
 
 #def queuer(httprequest, checkupSet=None):
-def queuer(checkupSet=None):
+def queuer(request, checkupSet=None):
     'Returns a iterator of the relevant questions, given a user'
     #First, we grab the logged-in User: request.user
     #Then, make sure the user is authentic: request.user.is_authenitcated
     if checkupSet is None:
         #@todo: Replace this with a checkup populating function
-        u = User.objects.get(pk=1)
-        #if request.user.is_authenticated():
-        #    u = request.user()
-        #else:
-        #    return HttpResponseRedirect('/login/', {'passed': True})
+        #u = User.objects.get(pk=1)
+        if request.user.is_authenticated():
+            u = request.user
+        else:
+            return HttpResponseRedirect('/login/', {'passed': True})
         # select_related allows us to follow foreign key relationships
         checkupSet = User_Input.objects.filter(user = u, input__isCheckup = True).select_related()
         inputDict = make_dict(checkupSet)
@@ -36,17 +36,26 @@ def queuer(checkupSet=None):
 class CheckupIterator():
     #template_name='testinter.html'
     
+    #def __init__(self):
+    #    self.iterator = queuer()
+    #    self.current = self.iterator.next()
+    #    self.is_completed = False
+    
     def __init__(self):
-        self.iterator = queuer()
-        self.current = self.iterator.next()
-        self.is_completed = False
-        
+        self.iterator = None
+        self.current = None
+        self.is_completed = False  
+            
     def ret_current(self):
         return self.current
     
     def ret_next(self):
         self.current = self.iterator.next()
         return self.current
+    
+    def create_iter(self, request):
+        self.iterator = queuer(request)
+        self.current = self.iterator.next()
     
     #def post(self, request):
     #    try:
@@ -58,6 +67,8 @@ class CheckupIterator():
     def get_checkup(self, request): 
     #def get_checkup(self):
         #Setting currentInput
+        if self.iterator is None:
+            self.create_iter(request)
         ret_checkup = {}
         if request.method == "POST":
             # Capture response selected
