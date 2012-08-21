@@ -1,11 +1,9 @@
 from health_direct.UserHandler.models import User_Input
-from django.contrib.auth.models import User
 from django.utils import importlib
-from django.views.generic.base import TemplateView
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
-from django.core.context_processors import csrf
+from django.contrib.auth.decorators import login_required
 
 def make_dict(qset):
     rlist = []
@@ -14,7 +12,6 @@ def make_dict(qset):
         rlist.append({ 'appName': q.input.appName, 'CheckupId':int(q.input.inputId) })
     return rlist
 
-#def queuer(httprequest, checkupSet=None):
 def queuer(request, checkupSet=None):
     'Returns a iterator of the relevant questions, given a user'
     #First, we grab the logged-in User: request.user
@@ -24,8 +21,6 @@ def queuer(request, checkupSet=None):
         #u = User.objects.get(pk=1)
         if request.user.is_authenticated():
             u = request.user
-        else:
-            return HttpResponseRedirect('/login/', {'passed': True})
         # select_related allows us to follow foreign key relationships
         checkupSet = User_Input.objects.filter(user = u, input__isCheckup = True).select_related()
         inputDict = make_dict(checkupSet)
@@ -63,17 +58,23 @@ class CheckupIterator():
     #    except StopIteration:
     #        r = RequestContext(request, {'no_checkups': True})
     #    return self.render_to_response(r)
-    
+
     def get_checkup(self, request): 
     #def get_checkup(self):
-        #Setting currentInput
+    
+    #Making sure the user is logged in
+        if not request.user.is_authenticated():
+            return HttpResponseRedirect('/accounts/login/')
         if self.iterator is None:
             self.create_iter(request)
         ret_checkup = {}
         if request.method == "POST":
             # Capture response selected
             
+            # Import user's unique user_entry table
+            
             # Store response in db
+            # INSERT IN USER_ENTRY, INPUT FK, INTEGER_RESPONSE VALUE
             try:
                 currentInput = self.ret_next()
             except StopIteration:
@@ -91,9 +92,10 @@ class CheckupIterator():
             
     def importer(self, checkup_key):
         try:
-            appModule = importlib.import_module('health_direct.'+ checkup_key['appName'] + '.views')
+            to_import = 'health_direct.apps.inputs.checkups.' + checkup_key['appName'] + '.views'
+            appModule = importlib.import_module(to_import)
         except ImportError:
-            raise ImportError('App Import Failed')
+            raise ImportError('App Import Failed, tried to import: ' + to_import)
         dcontext = appModule.display(checkup_key['CheckupId'])
         checkup_key.update(dcontext)
         return checkup_key

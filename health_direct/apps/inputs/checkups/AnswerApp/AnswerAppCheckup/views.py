@@ -1,5 +1,5 @@
 # Create your views here.
-from health_direct.QuestionBuilder.models import Questions, Question_Responses
+from health_direct.apps.inputs.checkups.AnswerApp.QuestionBuilder.models import Questions, Question_Responses
 
 def display(id, database='answerapp'):
     question = Questions.objects.using(database).get(pk=id)
