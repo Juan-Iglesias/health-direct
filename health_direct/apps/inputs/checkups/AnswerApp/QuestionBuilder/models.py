@@ -1,4 +1,5 @@
 from django.db import models
+from health_direct.Tagger.models import Tags
 
 # Create your models here.
 class Questions(models.Model):
@@ -13,6 +14,7 @@ class Questions(models.Model):
 class Question_Responses(models.Model):
     response = models.CharField(max_length=50)
     question = models.ForeignKey(Questions)
+    tags = models.ManyToManyField(Tags)    
     
     def __unicode__(self):
         return u'%s %s' % (self.question, self.response)
