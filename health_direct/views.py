@@ -16,7 +16,7 @@ def my_login(request):
 		password = request.POST.get('password', '')
 		user = auth.authenticate(username=username, password=password)
 		if user is not None:
-			auth.login(user)
+			auth.login(request, user)
 			return HttpResponseRedirect('/home/',)
 		else:
 			return render_to_response('login.html', {'invalid': True}, context_instance=RequestContext(request))

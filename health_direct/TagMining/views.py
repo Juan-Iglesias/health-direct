@@ -20,7 +20,7 @@ def tag_combinations():
     return ret_list
             
 
-def find_rules(confidence, tag_type):
+def find_rules(min_support, min_confidence, tag_type):
     tag_combos = tag_combinations()
     possible_rule_list = []
     rule_combos = itertools.product(tag_combos, tag_combos)
@@ -43,13 +43,14 @@ def find_rules(confidence, tag_type):
     
     #At this point we now have a list of almost every conceivable rule
     rule_list = []
-    str = 'Rules above confidence %s:' % confidence
+    str = 'Rules above min_support %s and min_confidence %s:' % (min_support, min_confidence)
     print(str)
     for rule in possible_rule_list:
         arule = Association_Rule(rule[0], rule[1], tag_type)
-        if arule.associate() >= confidence:
+        stats = arule.associate()
+        if stats[0] >= min_support and stats[1] >= min_confidence:
             rule_list.append(arule)
-            print rule
+            print rule, stats[0], stats[1]
     return rule_list
 
     

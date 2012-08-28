@@ -9,3 +9,10 @@ class Input(models.Model):
 
     def __unicode__(self):
         return u'%s %s' % (self.appName, self.inputId)
+    
+class Response(models.Model):
+    input = models.ForeignKey(Input)
+    responseId = models.IntegerField()
+    
+    def __unicode__(self):
+        return u'%s %s' % (self.input, self.responseId)

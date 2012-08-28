@@ -72,6 +72,12 @@ class CheckupIterator():
             # Capture response selected
             
             # Import user's unique user_entry table
+            str(request.user.id)
+            
+            
+            # Tag transaction takes place here.
+            #    User collects the responses tags
+            #    Response collects User's tags
             
             # Store response in db
             # INSERT IN USER_ENTRY, INPUT FK, INTEGER_RESPONSE VALUE

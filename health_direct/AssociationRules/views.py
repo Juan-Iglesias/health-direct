@@ -5,6 +5,7 @@ class Rule():
         self.antecedent = antecedent
         self.consequent = consequent
         self.tag_type = tag_type
+        self.support = 'Has not been set'
         self.confidence = 'Has not been set'
         
     def get_confidence(self):
@@ -14,7 +15,7 @@ class Rule():
 class Association_Rule(Rule):
     #@todo: Change this function to accept Tag objects, not strings
     'Describes an association rule.'
-    def get_support(self, itemset=None):
+    def get_support_db(self, itemset=None):
         'Returns the support of an itemset, or by default, self.antecedent'
         #Allows for more convenient get_support calling
         if itemset == None:
@@ -42,10 +43,10 @@ class Association_Rule(Rule):
             for item in itemset:
                     
                 # Makes sure each item is a valid tag
-                #try:
-                Tags.objects.get(name=item)
-                #except:
-                #   raise TagDoesNotExist('tag: ' + item + ' does not exist')
+                try:
+                    Tags.objects.get(name=item)
+                except:
+                    raise TagDoesNotExist('tag: ' + item + ' does not exist')
                     
                 # Counts taggables that contain the itemset
                 if t_attr == 'user':
@@ -60,22 +61,29 @@ class Association_Rule(Rule):
             # calculate support
         return numerator / denominator
         
-    def get_confidence_once(self):
-        'Calculates the confidence of self, let associate call this function!'
-        numerator = self.get_support(self.antecedent + self.consequent)
-        denominator = self.get_support(self.antecedent)
+    def get_stats(self):
+        'Calculates the support and confidence of self, let associate call this function!'
+        numerator = self.get_support_db(self.antecedent + self.consequent)
+        denominator = self.get_support_db(self.antecedent)
         try:
-            return numerator / denominator
+            conf = numerator / denominator
         except ZeroDivisionError:
         # In this case, the antecedent never occurs in the db!
-            return 0
+            conf = 0
+        return (numerator, conf)
         
             
     def associate(self):
-        'Calculates and sets the confidence of self'
-        if self.confidence == 'Has not been set':
-            self.confidence = self.get_confidence_once()
-        return self.confidence
+        'Calculates and sets the support and confidence of self'
+        empty = 'Has not been set'
+        if self.confidence == empty and self.support == empty:
+            stats = self.get_stats()
+            self.support = stats[0]
+            self.confidence = stats[1]
+        return (self.support, self.confidence)
+    
+    def get_support(self):
+        return self.support
     
     def get_confidence(self):
         'Returns the confidence of self'
