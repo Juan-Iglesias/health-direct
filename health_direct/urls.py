@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from health_direct.views import home, inputsearch, questionbuilder, questionbuilt, build, success
+from health_direct.views import home, inputsearch, questionbuilder, questionbuilt, build, success, register
 from health_direct.CheckupIterator.views import CheckupIterator
 from django.contrib.auth.views import login, logout
 
@@ -11,6 +11,7 @@ ci = CheckupIterator()
 urlpatterns = patterns('',
 	('^accounts/login/$', login),
 	('^accounts/logout/$', logout),
+	('^accounts/registration/$',register),
 	('^home/$', ci.get_checkup),
 	('^search/$', inputsearch),
 	('^questionbuilder/$', questionbuilder),
