@@ -1,9 +1,12 @@
 from health_direct.UserHandler.models import User_Input
+from health_direct.CheckupIterator.models import Entry
+from health_direct.InputSubmitBackend.models import Response, Input
 from django.utils import importlib
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
 
 def make_dict(qset):
     rlist = []
@@ -59,7 +62,7 @@ class CheckupIterator():
     #        r = RequestContext(request, {'no_checkups': True})
     #    return self.render_to_response(r)
 
-    def get_checkup(self, request): 
+    def get_checkup(self, request, currentInput = None): 
     #def get_checkup(self):
     
     #Making sure the user is logged in
@@ -72,16 +75,18 @@ class CheckupIterator():
             # Capture response selected
             
             # Import user's unique user_entry table
-            str(request.user.id)
-            
-            
+            response = Response.objects.filter(ResponseId=request.name,Input=currentInput)
+            new_entry = Entry(User = request.user, input = currentInput, response = response, value = request.value, timestamp = datetime.utcnow())
+            new_entry.save()
             # Tag transaction takes place here.
             #    User collects the responses tags
             #    Response collects User's tags
             
             # Store response in db
+            
             # INSERT IN USER_ENTRY, INPUT FK, INTEGER_RESPONSE VALUE
             try:
+                
                 currentInput = self.ret_next()
             except StopIteration:
                 # set no_checkup to True and don't try to import
