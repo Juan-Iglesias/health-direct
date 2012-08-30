@@ -1,5 +1,22 @@
 from health_direct.Tagger.models import *
 
+class Itemset():
+    def __init__(self, itemset):
+        self.itemset = itemset
+        
+    def get_support(self, taggables, itemsetsize, qset):       
+        support = 0
+        for taggable in taggables:
+            encountered_all = True
+            for item in self.itemset:
+                if not qset.filter(taggable=taggable, tag=item):
+                    encountered_all = False
+                    break
+            if encountered_all:
+                support += 1.0
+                
+        return support / itemsetsize
+                
 class Rule():
     def __init__(self, antecedent, consequent, tag_type):
         self.antecedent = antecedent
@@ -31,7 +48,7 @@ class Association_Rule(Rule):
         taggables = []
         all_records = self.tag_type.objects.all()
         for record in all_records:
-            taggable = eval('record.' + t_attr)
+            taggable = record.taggable
             if not taggable in taggables:
                 taggables.append(taggable)
         denominator = len(taggables)
@@ -49,12 +66,10 @@ class Association_Rule(Rule):
                     raise TagDoesNotExist('tag: ' + item + ' does not exist')
                     
                 # Counts taggables that contain the itemset
-                if t_attr == 'user':
-                    if not UserTagRelations.objects.filter(user=taggable, tag=item):
-                        encountered_all = False
-                else:
-                    if not self.tag_type.objects.filter(input=taggable, tag=item):
-                        encountered_all = False
+
+                if not self.tag_type.objects.filter(taggable=taggable, tag=item):
+                    encountered_all = False
+                    
             if encountered_all:
                 numerator += 1.0
             

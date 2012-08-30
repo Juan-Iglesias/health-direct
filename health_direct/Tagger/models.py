@@ -11,28 +11,29 @@ class Tags(models.Model):
     
     def __str__(self):
         return self.name
+    
 
 class UserTagRelations(models.Model):
-    user = models.ForeignKey(User)
+    taggable = models.ForeignKey(User)
     tag = models.ForeignKey(Tags)
     magnitude = models.FloatField()
     
     def __unicode__(self):
-        return u'%s %s' % (self.user, self.tag)
+        return u'%s %s' % (self.taggable, self.tag)
     
 class InputTagRelations(models.Model):
-    input = models.ForeignKey(Input)
+    taggable = models.ForeignKey(Input)
     tag = models.ForeignKey(Tags)
     magnitude = models.FloatField()
     
     def __unicode__(self):
-        return u'%s %s' % (self.input, self.tag)
+        return u'%s %s' % (self.taggable, self.tag)
   
 
 class ResponseTagRelations(models.Model):
-    response = models.ForeignKey(Response)
+    taggable = models.ForeignKey(Response)
     tag = models.ForeignKey(Tags)
     magnitude = models.FloatField()
     
     def __unicode__(self):
-        return u'%s %s' % (self.response, self.tag)
+        return u'%s %s' % (self.taggable, self.tag)
