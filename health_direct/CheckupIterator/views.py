@@ -7,13 +7,12 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+import ast
 
-def make_dict(qset):
-    rlist = []
-    for q in qset:
+def make_dict(q):
+    
         #@todo: place error handling here, what if appName of inputId is not found
-        rlist.append({ 'appName': q.input.appName, 'CheckupId':int(q.input.inputId) })
-    return rlist
+    return { 'appName': q.input.appName, 'CheckupId':int(q.input.inputId) }
 
 def queuer(request, checkupSet=None):
     'Returns a iterator of the relevant questions, given a user'
@@ -26,8 +25,7 @@ def queuer(request, checkupSet=None):
             u = request.user
         # select_related allows us to follow foreign key relationships
         checkupSet = User_Input.objects.filter(user = u, input__isCheckup = True).select_related()
-        inputDict = make_dict(checkupSet)
-    return inputDict.__iter__()
+    return checkupSet.__iter__()
 
 
 #class CheckupIterator(TemplateView):
@@ -75,9 +73,13 @@ class CheckupIterator():
             # Capture response selected
             
             # Import user's unique user_entry table
-            response = Response.objects.filter(ResponseId=request.name,Input=currentInput)
-            new_entry = Entry(User = request.user, input = currentInput, response = response, value = request.value, timestamp = datetime.utcnow())
+            input = self.ret_current().input
+            entry_dict = ast.literal_eval(request.POST['entry'])
+            response = Response.objects.get(id=entry_dict['responseId'],input=input)
+            
+            new_entry = Entry(user = request.user, input = input, response = response, value = entry_dict['value'], timestamp = datetime.utcnow())
             new_entry.save()
+            
             # Tag transaction takes place here.
             #    User collects the responses tags
             #    Response collects User's tags
@@ -85,8 +87,7 @@ class CheckupIterator():
             # Store response in db
             
             # INSERT IN USER_ENTRY, INPUT FK, INTEGER_RESPONSE VALUE
-            try:
-                
+            try:               
                 currentInput = self.ret_next()
             except StopIteration:
                 # set no_checkup to True and don't try to import
@@ -95,7 +96,8 @@ class CheckupIterator():
             return HttpResponseRedirect('/home/')
         else:
             currentInput = self.ret_current()
-            ret_checkup = self.importer(currentInput)
+            currentInputDict = make_dict(currentInput)
+            ret_checkup = self.importer(currentInputDict)
             # Right now this function just returns a dictionary that will be made into a context
         ret_checkup.update({'no_checkups': self.is_completed})
         return render_to_response('testinter.html', ret_checkup, context_instance=RequestContext(request))

@@ -19,4 +19,4 @@ class Question_Responses(models.Model):
         return u'%s %s' % (self.question, self.response)
     
     def disp(self):
-        return self.response
+        return dict([('value', self.response),('responseId', self.id)])

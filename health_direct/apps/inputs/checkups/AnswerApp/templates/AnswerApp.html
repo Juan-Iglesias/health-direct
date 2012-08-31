@@ -6,8 +6,10 @@
 <ul>
 	<form action="." method="post">
 		{% csrf_token %}
-{% for response in question_responses %}
-	<li> <input type="submit" value="{{ response }}" name="{{ question_responses|index:response }}")></li>
-{% endfor %}
+		{% for response in question_responses %}
+			<li>
+				<button name="entry" value="{{ response }}" type="submit">{{response.value}}</button>		
+			</li>	
+		{% endfor %}
 	</form>
 </ul>
