@@ -95,9 +95,10 @@ class CheckupIterator():
             #Consider issuing a HttpResponseRedirect here to avoid refreshing errors
             return HttpResponseRedirect('/home/')
         else:
-            currentInput = self.ret_current()
-            currentInputDict = make_dict(currentInput)
-            ret_checkup = self.importer(currentInputDict)
+            if not self.is_completed:
+                currentInput = self.ret_current()
+                currentInputDict = make_dict(currentInput)
+                ret_checkup = self.importer(currentInputDict)
             # Right now this function just returns a dictionary that will be made into a context
         ret_checkup.update({'no_checkups': self.is_completed})
         return render_to_response('testinter.html', ret_checkup, context_instance=RequestContext(request))

@@ -78,19 +78,95 @@ def get_rules(relationship_type, min_coverage, min_accuracy):
     for itemset in multi_itemset_hash:
         numerator = multi_itemset_hash[itemset]
         for item in itemset:
-            # denominator is the coverage of the itemset without item
+            # denominator is the coverage of the itemset without item, otherwise known as the coverage of the antecedent
             itemset_list = list(itemset)
             item_index = itemset_list.index(item)
             itemset_list.pop(item_index)
             antecedent = tuple(itemset_list)
             denominator = itemset_hash[antecedent]
-            accuracy = numerator / denominator
+            try:
+                accuracy = numerator / denominator
+            except ZeroDivisionError:
+                accuracy = 0
             if accuracy >= min_accuracy:
-                one_con_rule_hash[(antecedent, item)] = accuracy
+                one_con_rule_hash[(antecedent, (item,))] = (numerator, accuracy)
                 
     #one_con_rule_hash now contains all valid single consequent rules
+    # Now to generate double consequent rules
+
+    new_con_list = []
+    newrules = itertools.combinations(one_con_rule_hash, 2)
+
+    for rule in newrules:
+        # Pick rules with common antecedents
+        rule1 = rule[0]
+        rule2 = rule[1]
+        antecedent1 = rule1[0]
+        antecedent2 = rule2[0]
+        
+        
+        #Combine consequents
+        new_consequent = []
+        for tag in rule1[1]:
+            new_consequent.append(tag)
+        for tag in rule2[1]:
+            new_consequent.append(tag)
+            
+        #Make new antecedent
+        new_antecedent = []
+        for tag in antecedent1:
+            if tag in antecedent2:
+                new_antecedent.append(tag)
+            else:
+                new_consequent.append(tag)
+
+        if new_antecedent != []:
+            diff_consequents = set(antecedent2).difference(new_antecedent)
+            for consequent in diff_consequents:
+                new_consequent.append(consequent)
+    
+            new_rule = (tuple(set(new_antecedent)), tuple(set(new_consequent)))
+            new_con_list.append(new_rule)
+                    
+            #print('Original: ', rule)
+            #print('New: ', new_rule)
+    
+    new_con_set = set(new_con_list)  
+
+    rule_hash = {}
+    for new_rule in new_con_set:
+        # combine consequent and antecedent to form itemset
+        itemset = []
+        antecedent = new_rule[0]
+        consequent = new_rule[1]
+        for tag in antecedent:
+            itemset.append(tag)
+        for tag in consequent:
+            itemset.append(tag)
+            
+        itemset = tuple(itemset)
+            
+        try:
+            numerator = multi_itemset_hash[itemset]
+            denominator = itemset_hash[antecedent]
+            try:
+                accuracy = numerator / denominator
+            except ZeroDivisionError:
+                accuracy = 0
                 
-    return one_con_rule_hash
+            if accuracy >= min_accuracy:
+                rule_hash[new_rule] = (numerator, accuracy)
+        except KeyError:
+            pass
+    
+    rule_hash.update(one_con_rule_hash)
+    
+    return rule_hash
+
+        
+    # Look for commonalities in the antecedents. 
+    # For all rules with common antecedents, combine antecedents and remove distinguishing tags
+    # Place distinguishing tags into the consequent
      
         
 def tag_combinations():

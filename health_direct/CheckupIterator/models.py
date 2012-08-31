@@ -8,4 +8,7 @@ class Entry(models.Model):
     value = models.CharField(max_length=100)
     timestamp = models.DateTimeField()
     
+    def __unicode__(self):
+        return u'%s %s %s %s %s' % (self.user, self.input, self.response, self.value, self.timestamp)
+    
 # Create your models here.

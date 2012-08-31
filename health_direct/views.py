@@ -69,12 +69,13 @@ def questionbuilt(request):
 @receiver(post_save, sender=User)
 def create_user_entry_table(sender,**kwargs):
 	if 'created' in kwargs:
-		query_string = """CREATE TABLE user_entry%s 
-						("id" serial NOT NULL PRIMARY KEY,
-						 "entry_id" integer NOT NULL REFERENCES "CheckupIterator_entry" ("id") DEFERRABLE INITIALLY DEFERRED)"""
-		cursor = connection.cursor()
-		cursor.execute(query_string, [kwargs["instance"].id])
-		transaction.commit_unless_managed()
+		if kwargs['created']:
+			query_string = """CREATE TABLE user_entry%s 
+							("id" serial NOT NULL PRIMARY KEY,
+							 "entry_id" integer NOT NULL REFERENCES "CheckupIterator_entry" ("id") DEFERRABLE INITIALLY DEFERRED)"""
+			cursor = connection.cursor()
+			cursor.execute(query_string, [kwargs["instance"].id])
+			transaction.commit_unless_managed()
 
 def register(request):
 	if request.method == 'POST':
