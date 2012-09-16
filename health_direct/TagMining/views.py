@@ -1,10 +1,11 @@
 # Create your views here.
-from health_direct.AssociationRules.views import Association_Rule, Itemset
+from health_direct.AssociationRules.views import Itemset
 from health_direct.Tagger.models import *
 import itertools
 import copy
 
 def get_itemsets(relationship_type, min_coverage, include_single_itemsets=False):
+    'Finds all itemsets whose coverage is equal to or above the min_coverage'
     
     r_qset = relationship_type.objects.all()
     
@@ -64,6 +65,8 @@ def get_itemsets(relationship_type, min_coverage, include_single_itemsets=False)
 
 
 def get_rules(relationship_type, min_coverage, min_accuracy):
+    'Finds all rules whose coverage and accuracy is equal to or above the min_coverage and min_accuracy'
+    
     #We give get_itemsets a True to avoid calculating the coverage of one itemsets again
     itemset_hash = get_itemsets(relationship_type, min_coverage, True)
     
@@ -168,7 +171,7 @@ def get_rules(relationship_type, min_coverage, min_accuracy):
     # For all rules with common antecedents, combine antecedents and remove distinguishing tags
     # Place distinguishing tags into the consequent
      
-        
+'''
 def tag_combinations():
     ret_list = []
     tags = Tags.objects.all()
@@ -218,6 +221,7 @@ def find_rules(min_support, min_confidence, relationship_type):
             rule_list.append(arule)
             print rule, stats[0], stats[1]
     return rule_list
+'''
 
     
 
