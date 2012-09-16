@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+from django.db import connection, transaction
 import ast
 
 def make_dict(q):
@@ -79,7 +80,10 @@ class CheckupIterator():
             
             new_entry = Entry(user = request.user, input = input, response = response, value = entry_dict['value'], timestamp = datetime.utcnow())
             new_entry.save()
-            
+            insert_string = "INSERT INTO user_entry%s (entry_id) VALUES (%s)"
+            cursor = connection.cursor()
+            cursor.execute(insert_string, [request.user.id, new_entry.id])
+            transaction.commit_unless_managed()
             # Tag transaction takes place here.
             #    User collects the responses tags
             #    Response collects User's tags
